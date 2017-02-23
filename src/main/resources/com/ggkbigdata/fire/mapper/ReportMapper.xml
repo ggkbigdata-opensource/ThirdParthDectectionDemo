@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ggkbigdata.fire.mapper.ReportMapper">
+    
+    <select id="getReportItemById" resultType="com.ggkbigdata.fire.model.ReportItem">
+        SELECT a.report_num, a.check_level, a.check_num, a.unqualified_num, 
+              ((a.check_num - a.unqualified_num) / a.check_num) AS ratio 
+              FROM check_item_result_statis A 
+              WHERE a.report_num = #{reportNum};
+    </select>
+    
+    <insert id="saveReportResult">
+        INSERT into check_item_report_result(report_num, score, report_level) 
+            VALUE(#{reportNum},#{score},#{reportLevel})
+            ON DUPLICATE KEY UPDATE score=#{score}, report_level=#{reportLevel};
+    </insert>
+    
+    <select id="getReportList" resultType="java.lang.String">
+        SELECT DISTINCT report_num 
+            FROM check_item_result_statis 
+            WHERE report_num not in 
+                (SELECT DISTINCT report_num 
+                    FROM check_item_report_result);
+    </select>
+</mapper>
