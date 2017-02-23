@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ggkbigdata.fire.mapper.CheckReportMapper">
+    
+    <insert id="saveCheckReportInfo">
+        INSERT into check_report_info(
+                    report_num, 
+                    project_name, 
+                    project_address,
+                    agent_name,
+                    qa_name,
+                    qa_address,
+                    contact_tel,
+                    contact_fax,
+                    contact_post_code,
+                    message,
+                    report_conclusion) 
+            VALUE(#{info.reportNum},
+                  #{info.projectName},
+                  #{info.projectAddress},
+                  #{info.agentName},
+                  #{info.qaName},
+                  #{info.qaAddress},
+                  #{info.contactTel},
+                  #{info.contactFax},
+                  #{info.contactPostCode},
+                  #{info.message},
+                  #{info.reportConclusion})
+            ON DUPLICATE KEY UPDATE 
+                report_num = #{info.reportNum},
+                project_name = #{info.projectName}, 
+                project_address = #{info.projectAddress},
+                agent_name = #{info.agentName},
+                qa_name = #{info.qaName},
+                qa_address = #{info.qaAddress},
+                contact_tel = #{info.contactTel},
+                contact_fax = #{info.contactFax},
+                contact_post_code = #{info.contactPostCode},
+                message = #{info.message},
+                report_conclusion = #{info.reportConclusion};
+    </insert>
+    
+    <delete id="deleteCheckReportResultStatByReportNum">
+        delete from check_item_result_statis where report_num = #{reportNum};
+    </delete>
+    
+    <insert id="saveCheckReportResultStat">
+        insert into check_item_result_statis(
+            report_num,
+            item_code,
+            item_name,
+            check_level,
+            check_num,
+            unqualified_num)
+            values 
+            <foreach collection="list" item="data" index="index" separator=",">
+                (
+                    #{data.reportNum},
+                    #{data.itemCode},
+                    #{data.itemName},
+                    #{data.checkLevel},
+                    #{data.checkNum},
+                    #{data.unqualifiedNum}
+                )
+            </foreach>
+    </insert>
+    
+    <delete id="deleteCheckItemDetailByReportNum">
+        delete from check_item_detail where report_num = #{reportNum}
+    </delete>
+    
+    <insert id="saveCheckItemDetail">
+        insert into check_item_detail(
+            report_num,
+            item_code,
+            item_name,
+            check_level,
+            check_num,
+            unqualified_num) 
+            values 
+            <foreach collection="list" item="data" index="index" separator=",">
+                (
+                    #{data.reportNum},
+                    #{data.itemCode},
+                    #{data.itemName},
+                    #{data.checkLevel},
+                    #{data.checkNum},
+                    #{data.unqualifiedNum}
+                )
+            </foreach>
+    </insert>
+    
+</mapper>
